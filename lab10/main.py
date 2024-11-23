@@ -1,11 +1,11 @@
 # main.py
 
-from src.data_loader import DataLoader
-from src.evaluator import Evaluator
-from src.hyperparameter_tuner import HyperparameterTuner
-from src.model_builder import ModelBuilder
-from src.trainer import Trainer
-from src.visualizer import Visualizer
+from lab10.src.data_loader import DataLoader
+from lab10.src.evaluator import Evaluator
+from lab10.src.hyperparameter_tuner import HyperparameterTuner
+from lab10.src.model_builder import ModelBuilder
+from lab10.src.trainer import Trainer
+from lab10.src.visualizer import Visualizer
 
 
 def main():

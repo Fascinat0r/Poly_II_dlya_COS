@@ -8,8 +8,8 @@ from datetime import datetime
 
 import psutil
 
-from src.evaluator import Evaluator
-from src.trainer import Trainer
+from lab10.src.evaluator import Evaluator
+from lab10.src.trainer import Trainer
 
 
 class HyperparameterTuner:

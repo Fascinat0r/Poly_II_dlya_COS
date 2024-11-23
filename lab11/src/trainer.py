@@ -2,6 +2,7 @@
 
 import time
 
+
 class Trainer:
     def __init__(self, model, loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy']):
         self.model = model

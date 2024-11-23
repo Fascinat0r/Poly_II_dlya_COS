@@ -1,7 +1,5 @@
 # src/data_loader.py
 
-import os
-
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 

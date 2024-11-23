@@ -1,5 +1,6 @@
-import pandas as pd
 import os
+
+import pandas as pd
 
 
 def update_results_with_epochs(results_file, stats_dir):
@@ -37,8 +38,9 @@ def update_results_with_epochs(results_file, stats_dir):
 
 
 # Путь к файлам
-results_file = 'results/hyperparameter_results.csv'
-stats_dir = 'results/per_run_stats'
+if __name__ == "__main__":
+    results_file = 'results/hyperparameter_results.csv'
+    stats_dir = 'results/per_run_stats'
 
-# Запуск обновления
-update_results_with_epochs(results_file, stats_dir)
+    # Запуск обновления
+    update_results_with_epochs(results_file, stats_dir)

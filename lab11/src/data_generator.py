@@ -2,21 +2,13 @@
 
 import numpy as np
 
+
 class DataGenerator:
-    def __init__(self, num_samples_per_disease):
+    def __init__(self, num_samples_per_disease, haralick_params):
         self.num_samples_per_disease = num_samples_per_disease
         self.num_diseases = 8
         self.num_parameters = 24  # 4 параметра Харалика * 6 цветовых компонентов
-        self.haralick_params = self.get_haralick_params()
-
-    def get_haralick_params(self):
-        # Усредненные параметры Харалика для 8 заболеваний
-        haralick_params = {
-            'Rcon': np.array([0.2457, 0.1240, 0.3154, 0.2008, 0.3102, 0.2077, 0.2023, 0.1599]),
-            # ... (остальные параметры)
-            'GBhom': np.array([0.9400, 0.9687, 0.9618, 0.9583, 0.8518, 0.9591, 0.9484, 0.9482]),
-        }
-        return haralick_params
+        self.haralick_params = haralick_params
 
     def generate_samples(self, disease_index, num_samples, std_dev=0.032):
         samples = []

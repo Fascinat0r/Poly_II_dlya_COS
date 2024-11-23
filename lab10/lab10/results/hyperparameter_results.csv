@@ -1,0 +1,1 @@
+timestamp,num_hidden_layers,neurons_per_layer,epochs,batch_size,train_loss,train_accuracy,val_loss,val_accuracy,test_loss,test_accuracy,training_time_sec

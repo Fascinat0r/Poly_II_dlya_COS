@@ -6,6 +6,7 @@ import os
 import csv
 from datetime import datetime
 
+
 class Trainer:
     def __init__(self, model, loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy']):
         self.model = model
@@ -18,7 +19,8 @@ class Trainer:
                            optimizer=self.optimizer,
                            metrics=self.metrics)
 
-    def train(self, train_generator, val_generator, epochs, steps_per_epoch, validation_steps, run_id, stats_dir='results/per_run_stats'):
+    def train(self, train_generator, val_generator, epochs, steps_per_epoch, validation_steps, run_id,
+              stats_dir='results/per_run_stats'):
         os.makedirs(stats_dir, exist_ok=True)
         run_stats_file = os.path.join(stats_dir, f'run_{run_id}.csv')
 

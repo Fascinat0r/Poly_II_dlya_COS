@@ -1,9 +1,10 @@
 import os
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from glob import glob
-from numpy.polynomial.polynomial import Polynomial
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
 
 def plot_with_trendlines(data_folder, output_folder='plots'):
     """
@@ -72,11 +73,12 @@ def plot_with_trendlines(data_folder, output_folder='plots'):
     plt.show()
     print(f"Графики сохранены в {output_folder}:\n - {acc_output_path}\n - {loss_output_path}")
 
+
 if __name__ == "__main__":
     # Путь к папке с файлами прогонов
-    data_folder = '../results/per_run_stats'
+    data_folder = 'results/per_run_stats'
     # Папка для сохранения графиков
-    output_folder = '../results/plots'
+    output_folder = 'results/plots'
 
     # Построение графиков
     plot_with_trendlines(data_folder, output_folder)

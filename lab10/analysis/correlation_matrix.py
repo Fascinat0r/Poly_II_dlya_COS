@@ -3,6 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
+
 def build_filtered_correlation_matrix(input_file, output_image='filtered_correlation_matrix.png'):
     """
     Построение матрицы корреляции на основе фильтрованных данных из CSV-файла.
@@ -54,6 +55,7 @@ def build_filtered_correlation_matrix(input_file, output_image='filtered_correla
         print(f"{col1} <-> {col2}: {value:.3f}")
 
     print(f"\nМатрица корреляции сохранена в {output_image}")
+
 
 if __name__ == "__main__":
     # Путь к CSV-файлу с данными
