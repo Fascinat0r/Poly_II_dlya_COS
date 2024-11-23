@@ -2,7 +2,7 @@
 
 import csv
 import os
-
+import pandas as pd
 from lab11.src.data_generator import DataGenerator
 from lab11.src.evaluator import Evaluator
 from lab11.src.model_builder import ModelBuilder
@@ -11,11 +11,13 @@ from lab11.src.trainer import Trainer
 
 class ExperimentRunner:
     def __init__(self, num_samples_list, results_file='results/experiment_results.csv',
-                 haralick_params_file='data/haralick_parameters.csv'):
+                 haralick_params_file='data/haralick_parameters.csv', stats_dir='results/per_run_stats' ):
         self.num_samples_list = num_samples_list
         self.results_file = results_file
-        self.haralick_params_file = haralick_params_file  # Новый параметр
+        self.haralick_params_file = haralick_params_file
+        self.stats_dir = stats_dir
         os.makedirs(os.path.dirname(self.results_file), exist_ok=True)
+        os.makedirs(self.stats_dir, exist_ok=True)  # Создаем папку для прогонов
 
     def run_experiments(self):
         # Загрузка параметров Харалика
@@ -48,6 +50,10 @@ class ExperimentRunner:
                 # Обучение модели
                 history, training_time = trainer.train(X_train, y_train, X_val, y_val)
 
+                # Сохранение метрик обучения в файл
+                run_stats_file = os.path.join(self.stats_dir, f'run_{num_train_samples}.csv')
+                self.save_run_stats(history, run_stats_file)
+
                 # Оценка модели
                 evaluator = Evaluator(model)
                 test_loss, test_accuracy = evaluator.evaluate(X_test, y_test)
@@ -63,3 +69,22 @@ class ExperimentRunner:
                 })
                 csv_file.flush()
                 print(f"Эксперимент с {num_train_samples} обучающими примерами завершён.")
+
+    @staticmethod
+    def save_run_stats(history, file_path):
+        """
+        Сохраняет историю обучения в CSV-файл.
+
+        :param history: История обучения модели.
+        :param file_path: Путь для сохранения файла.
+        """
+        history_data = {
+            'epoch': list(range(1, len(history.history['loss']) + 1)),
+            'loss': history.history['loss'],
+            'accuracy': history.history['accuracy'],
+            'val_loss': history.history['val_loss'],
+            'val_accuracy': history.history['val_accuracy']
+        }
+        df = pd.DataFrame(history_data)
+        df.to_csv(file_path, index=False)
+        print(f"Метрики обучения сохранены в {file_path}")

@@ -34,3 +34,5 @@ class Visualizer:
         plt.grid(True)
         plt.savefig(os.path.join(self.plots_dir, 'training_time_vs_num_samples.png'))
         plt.close()
+
+

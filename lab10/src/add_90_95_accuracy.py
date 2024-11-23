@@ -39,8 +39,8 @@ def update_results_with_epochs(results_file, stats_dir):
 
 # Путь к файлам
 if __name__ == "__main__":
-    results_file = 'results/hyperparameter_results.csv'
-    stats_dir = 'results/per_run_stats'
+    results_file = '../results/hyperparameter_results.csv'
+    stats_dir = '../results/per_run_stats'
 
     # Запуск обновления
     update_results_with_epochs(results_file, stats_dir)
