@@ -21,6 +21,8 @@ class ModelBuilder:
         if self.model_type == 'FFNN':
             return self.build_ffnn()
         elif self.model_type == 'CNN':
+            if len(self.input_shape) != 3:
+                raise ValueError(f"Для CNN требуется 3D входные данные, получено: {self.input_shape}")
             if self.input_shape[0] < 3 or self.input_shape[1] < 3:
                 raise ValueError(f"Размер входных данных слишком мал для CNN: {self.input_shape}")
             return self.build_cnn()
@@ -37,17 +39,20 @@ class ModelBuilder:
         return model
 
     def build_cnn(self):
+        """
+        Построение CNN модели с учётом небольшого размера входных данных.
+        """
         model = Sequential()
-        model.add(Conv2D(32, (3, 3), activation='relu', input_shape=self.input_shape))
-        model.add(MaxPooling2D((2, 2)))
-        model.add(Conv2D(64, (3, 3), activation='relu'))
-        model.add(MaxPooling2D((2, 2)))
+        model.add(Conv2D(32, (3, 3), activation='relu', padding='same', input_shape=self.input_shape))
+        model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D((2, 2), padding='same'))  # Поддерживаем минимальные размеры
+        model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D((2, 2), padding='same'))
         model.add(Flatten())
         model.add(Dense(64, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.num_classes, activation='softmax'))
-        return model
-
         return model
 
     @staticmethod

@@ -4,60 +4,65 @@ import numpy as np
 
 
 class DataGenerator:
-    def __init__(self, num_samples_per_disease, haralick_params):
+    def __init__(self, num_samples_per_disease, haralick_params, color_combination, model_type='FFNN'):
         """
         :param num_samples_per_disease: Количество образцов на заболевание.
         :param haralick_params: Словарь с параметрами Харалика.
+        :param color_combination: Список цветов, используемых в данных.
+        :param model_type: Тип модели ('FFNN' или 'CNN').
         """
         self.num_samples_per_disease = num_samples_per_disease
         self.num_diseases = 8
         self.haralick_params = haralick_params
+        self.color_combination = color_combination
+        self.model_type = model_type
 
-        # Определение цветов и их параметров
-        self.color_to_params = self._group_params_by_color(haralick_params)
-        self.colors = list(self.color_to_params.keys())
-        self.num_features = len(haralick_params)  # Общее число параметров для текущих цветов
+        # Определение всех параметров
+        self.all_colors = ['R', 'G', 'B', 'RG', 'RB', 'GB']
+        self.params_per_color = 4  # con, cor, en, hom
+        self.total_features = len(self.all_colors) * self.params_per_color  # 24
 
         print("Инициализация генератора данных:")
         print(f"- Количество заболеваний: {self.num_diseases}")
         print(f"- Количество образцов на заболевание: {self.num_samples_per_disease}")
-        print(f"- Обнаруженные цветовые компоненты: {self.colors}")
-        print(f"- Общее количество параметров: {self.num_features}")
-
-    @staticmethod
-    def _group_params_by_color(haralick_params):
-        """
-        Группирует параметры Харалика по цветам.
-
-        :param haralick_params: Словарь параметров Харалика.
-        :return: Словарь {цвет: [список параметров]}.
-        """
-        color_to_params = {}
-        for param, values in haralick_params.items():
-            color = param[:2] if len(param) > 3 else param[0]
-            if color not in color_to_params:
-                color_to_params[color] = {}
-            color_to_params[color][param] = values
-        return color_to_params
+        print(f"- Обнаруженные цветовые компоненты: {self.color_combination}")
+        print(f"- Общее количество параметров: {self.total_features}")
+        print(f"- Тип модели: {self.model_type}")
 
     def generate_samples(self, disease_index, num_samples, std_dev=0.032):
         samples = []
         for _ in range(num_samples):
             sample = []
-            for color, params in self.color_to_params.items():
-                for key, values in params.items():
-                    mean_value = values[disease_index]
-                    noise = np.random.normal(0, std_dev)
-                    value = mean_value + noise
-                    sample.append(value)
-            # Динамическое определение формы
-            num_features = len(sample)
-            width = min(6, num_features)  # Максимальная ширина 6
-            height = (num_features + width - 1) // width  # Рассчитываем высоту, чтобы вместить все параметры
-            sample_array = np.array(
-                sample + [0] * (height * width - num_features))  # Заполняем недостающие значения нулями
-            sample_array = sample_array.reshape(height, width, 1)
-            sample_array = np.repeat(sample_array, 3, axis=-1)  # Преобразуем в 3-канальный RGB
+            for color in self.all_colors:
+                if color in self.color_combination:
+                    for suffix in ['con', 'cor', 'en', 'hom']:
+                        param_name = color + suffix
+                        if param_name in self.haralick_params:
+                            mean_value = self.haralick_params[param_name][disease_index]
+                            noise = np.random.normal(0, std_dev)
+                            value = mean_value + noise
+                            sample.append(value)
+                        else:
+                            # Если параметр отсутствует, устанавливаем 0.0
+                            sample.append(0.0)
+                else:
+                    # Для неиспользуемых цветов устанавливаем параметры в 0.0
+                    for _ in range(self.params_per_color):
+                        sample.append(0.0)
+            # Теперь sample имеет 24 элемента
+
+            if self.model_type == 'FFNN':
+                # Для FFNN используем плоский вектор
+                sample_array = np.array(sample)
+            elif self.model_type == 'CNN':
+                # Для CNN формируем изображение размером (4, 6, 3)
+                height, width = 4, 6
+                sample_padded = sample[:height * width]  # Обрезаем, если больше
+                sample_padded += [0.0] * (height * width - len(sample_padded))  # Заполняем недостающие
+                sample_array = np.array(sample_padded).reshape(height, width, 1)
+                sample_array = np.repeat(sample_array, 3, axis=-1)  # Преобразуем в 3-канальный RGB
+            else:
+                raise ValueError(f"Неизвестный тип модели: {self.model_type}")
             samples.append(sample_array)
         return samples
 
