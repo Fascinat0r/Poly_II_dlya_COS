@@ -1,10 +1,10 @@
 # src/trainer.py
 
-import tensorflow as tf
-import time
-import os
 import csv
-from datetime import datetime
+import os
+import time
+
+import tensorflow as tf
 
 
 class Trainer:

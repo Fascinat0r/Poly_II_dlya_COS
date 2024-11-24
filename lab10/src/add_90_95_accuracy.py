@@ -13,7 +13,7 @@ def update_results_with_epochs(results_file, stats_dir):
 
     # Идем по каждой строке (прогонке)
     for index, row in results_df.iterrows():
-        run_id = f"run_{index+1}.csv"
+        run_id = f"run_{index + 1}.csv"
         run_file_path = os.path.join(stats_dir, run_id)
 
         # Проверяем, существует ли файл статистики для данной прогонки

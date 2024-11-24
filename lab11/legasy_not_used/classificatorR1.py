@@ -1,12 +1,12 @@
-#Программа нейронной сети прямого распространения для распознавания 6-ти болезней пшеницы 
-#по 3D-цифровым описаниям изображений листьев.
-#количество цифровых компонентов - 6 (R,G,B,RG,RB,GB)
-#количество параметров Харалика - 4. 
+# Программа нейронной сети прямого распространения для распознавания 6-ти болезней пшеницы
+# по 3D-цифровым описаниям изображений листьев.
+# количество цифровых компонентов - 6 (R,G,B,RG,RB,GB)
+# количество параметров Харалика - 4.
 
 
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Activation, Dropout, Flatten, Dense
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 
 # Каталог с данными для обучения
 train_dir = '../data/train_dir'
@@ -42,13 +42,13 @@ model.add(Dropout(0.25))
 
 model.add(Dense(8))
 model.add(Activation('softmax'))
-#model.add(Activation('sigmoid'))
+# model.add(Activation('sigmoid'))
 
 model.compile(loss='sparse_categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-#model.summary()
+# model.summary()
 
 datagen = ImageDataGenerator(rescale=1. / 255)
 
@@ -64,7 +64,6 @@ val_generator = datagen.flow_from_directory(
     batch_size=batch_size,
     class_mode='sparse')
 
-
 test_generator = datagen.flow_from_directory(
     test_dir,
     target_size=(img_width, img_height),
@@ -75,9 +74,9 @@ model.fit_generator(
     train_generator,
     steps_per_epoch=nb_train_samples // batch_size,
     validation_data=val_generator,
-    validation_steps= nb_validation_samples // batch_size,
+    validation_steps=nb_validation_samples // batch_size,
     epochs=epochs,
-    shuffle = True)
+    shuffle=True)
 model.save('plant_diagnosis_3D.h5')
 
 scores = model.evaluate_generator(test_generator, nb_test_samples // batch_size)

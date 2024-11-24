@@ -1,7 +1,7 @@
 # src/model_builder.py
 
-from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, Flatten, Dense
+from tensorflow.keras.models import Sequential
 
 
 class ModelBuilder:

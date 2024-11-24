@@ -1,7 +1,8 @@
+import os
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-import os
 
 
 def build_filtered_correlation_matrix(input_file, output_image='filtered_correlation_matrix.png'):

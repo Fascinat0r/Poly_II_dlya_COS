@@ -45,7 +45,8 @@ def plot_with_trendlines(data_folder, output_folder='plots'):
     for order in [1, 2, 3]:
         coefs = np.polyfit(all_epochs, all_val_accuracy, order)
         trendline = np.polyval(coefs, np.linspace(all_epochs.min(), all_epochs.max(), 500))
-        ax_acc.plot(np.linspace(all_epochs.min(), all_epochs.max(), 500), trendline, label=f'Тренд {order}-го порядка', linewidth=2)
+        ax_acc.plot(np.linspace(all_epochs.min(), all_epochs.max(), 500), trendline, label=f'Тренд {order}-го порядка',
+                    linewidth=2)
 
     # Построение линий тренда для потерь
     all_val_loss = np.concatenate([pd.read_csv(f)['val_loss'].values for f in run_files])
@@ -53,7 +54,8 @@ def plot_with_trendlines(data_folder, output_folder='plots'):
     for order in [1, 2, 3]:
         coefs = np.polyfit(all_epochs, all_val_loss, order)
         trendline = np.polyval(coefs, np.linspace(all_epochs.min(), all_epochs.max(), 500))
-        ax_loss.plot(np.linspace(all_epochs.min(), all_epochs.max(), 500), trendline, label=f'Тренд {order}-го порядка', linewidth=2)
+        ax_loss.plot(np.linspace(all_epochs.min(), all_epochs.max(), 500), trendline, label=f'Тренд {order}-го порядка',
+                     linewidth=2)
 
     # Настройка графиков
     ax_acc.set_title('График точности на тестовой выборке')
