@@ -27,8 +27,8 @@ def update_results_with_epochs(results_file, stats_dir):
                 raise ValueError(f"Неправильный формат имени файла: {stat_file}")
 
             model_type = parts[0]
-            num_train_samples_str = parts[-1]
-            color_components = '_'.join(parts[1:-1])
+            num_train_samples_str = parts[-3]
+            color_components = ','.join(parts[1:-3])
 
             num_train_samples = int(num_train_samples_str)
             run_file_path = os.path.join(stats_dir, stat_file)
@@ -47,7 +47,7 @@ def update_results_with_epochs(results_file, stats_dir):
                 row_index = results_df[
                     (results_df['num_train_samples'] == num_train_samples) &
                     (results_df['model_type'] == model_type) &
-                    (results_df['color_components'] == color_components)
+                    (results_df['colors_used'] == color_components)
                     ].index
                 if not row_index.empty:
                     results_df.at[row_index[0], 'epoch_90_accuracy'] = epoch_90 if pd.notna(epoch_90) else None
