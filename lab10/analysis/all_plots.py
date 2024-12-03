@@ -8,7 +8,7 @@ import pandas as pd
 
 def plot_with_trendlines(data_folder, output_folder='plots'):
     """
-    Построение графиков точности и потерь на тестовой выборке с линиями тренда.
+    Построение графиков точности и потерь на тестовой выборке.
 
     :param data_folder: Путь к папке с файлами прогонов (../results/per_run_stats).
     :param output_folder: Папка для сохранения графиков.

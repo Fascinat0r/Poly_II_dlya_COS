@@ -1,6 +1,7 @@
 # main.py
 import os
 
+from lab10.src.add_90_95_accuracy import update_results_with_epochs
 from lab10.src.data_loader import DataLoader
 from lab10.src.evaluator import Evaluator
 from lab10.src.hyperparameter_tuner import HyperparameterTuner
@@ -43,10 +44,13 @@ def main():
     evaluator = Evaluator(model=None)  # Модель будет задана в процессе
     tuner = HyperparameterTuner(model_builder, data_loader, trainer, evaluator,
                                 results_file='results/hyperparameter_results.csv', stats_dir='results/per_run_stats')
-    visualizer = Visualizer(results_file='results/hyperparameter_results.csv')
+    visualizer = Visualizer(results_file, stats_dir, plots_dir)
 
     # Запуск подбора гиперпараметров
     tuner.tune(hyperparameters)
+
+    # Добавляем данные об эпохах 90% и 95% точности
+    update_results_with_epochs(results_file, stats_dir)
 
     # Построение графиков
     visualizer.generate_all_plots()

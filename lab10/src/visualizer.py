@@ -5,11 +5,15 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from lab10.analysis.all_plots import plot_with_trendlines
+from lab10.analysis.correlation_matrix import build_filtered_correlation_matrix
+
 
 class Visualizer:
-    def __init__(self, results_file='results/hyperparameter_results.csv', plots_dir='results/plots'):
+    def __init__(self, results_file, epochs_dir, plots_dir):
         self.results_file = results_file
         self.plots_dir = plots_dir
+        self.epochs_dir = epochs_dir
         os.makedirs(self.plots_dir, exist_ok=True)
 
     def plot_epochs_vs_accuracy(self):
@@ -65,3 +69,8 @@ class Visualizer:
         self.plot_batch_size_vs_accuracy()
         self.plot_neurons_vs_accuracy()
         self.plot_layers_vs_accuracy()
+
+        matrix_file = os.path.join(self.plots_dir, 'correlation_matrix.png')
+        build_filtered_correlation_matrix(self.results_file, matrix_file)
+
+        plot_with_trendlines(self.epochs_dir, self.plots_dir)
