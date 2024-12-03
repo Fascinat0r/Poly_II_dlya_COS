@@ -1,18 +1,32 @@
 # main.py
+import os
 
 from lab10.src.data_loader import DataLoader
 from lab10.src.evaluator import Evaluator
 from lab10.src.hyperparameter_tuner import HyperparameterTuner
 from lab10.src.model_builder import ModelBuilder
 from lab10.src.trainer import Trainer
+from lab10.src.utils import clear_data
 from lab10.src.visualizer import Visualizer
 
 
 def main():
     # Пути к директориям с данными
-    train_dir = 'data/train_dir'
-    val_dir = 'data/val_dir'
-    test_dir = 'data/test_dir'
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    data_dir = os.path.join(base_dir, 'data')
+    results_dir = os.path.join(base_dir, 'results')
+    train_dir = os.path.join(data_dir, 'train_dir')
+    val_dir = os.path.join(data_dir, 'val_dir')
+    test_dir = os.path.join(data_dir, 'test_dir')
+    results_file = os.path.join(results_dir, 'hyperparameter_results.csv')
+    stats_dir = os.path.join(results_dir, 'per_run_stats')
+    plots_dir = os.path.join(results_dir, 'plots')
+
+    # Предложить очистку данных
+    if os.path.exists(results_file) or os.path.exists(stats_dir) or os.path.exists(plots_dir):
+        clear_choice = input("Очистить существующие данные (y/N)? ").strip().lower()
+        if clear_choice == 'y':
+            clear_data(results_file, stats_dir, plots_dir)
 
     # Гиперпараметры для подбора
     hyperparameters = {

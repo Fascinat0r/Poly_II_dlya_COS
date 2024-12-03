@@ -84,6 +84,21 @@ class HyperparameterTuner:
         max_workers_by_cpu = os.cpu_count() or 1
         return max(1, min(max_workers_by_memory, max_workers_by_cpu))  # Минимум 1 процесс
 
+    def get_existing_results(self):
+        """Чтение уже существующих результатов из CSV-файла."""
+        existing_combinations = set()
+        if os.path.exists(self.results_file):
+            with open(self.results_file, mode='r', newline='') as csv_file:
+                reader = csv.DictReader(csv_file)
+                for row in reader:
+                    # Получаем комбинацию гиперпараметров как кортеж
+                    hp = (int(row['num_hidden_layers']),
+                          int(row['neurons_per_layer']),
+                          int(row['epochs']),
+                          int(row['batch_size']))
+                    existing_combinations.add(hp)
+        return existing_combinations
+
     def tune(self, hyperparameters, memory_per_process_gb=1.0):
         """
         Запускает подбор гиперпараметров с учётом доступной памяти и процессоров.
@@ -92,6 +107,10 @@ class HyperparameterTuner:
         """
         # Создание директории для результатов, если она не существует
         os.makedirs(os.path.dirname(self.results_file), exist_ok=True)
+
+        # Получение уже существующих комбинаций
+        existing_combinations = self.get_existing_results()
+        print(f"Найдено {len(existing_combinations)} уже выполненных прогонов.")
 
         # Определение общего количества комбинаций
         combinations = list(itertools.product(
@@ -104,12 +123,15 @@ class HyperparameterTuner:
         print(f"Общее количество прогонов: {total_runs}")
 
         # Открытие CSV файла и запись заголовка
-        with open(self.results_file, mode='w', newline='') as csv_file:
+        with open(self.results_file, mode='a', newline='') as csv_file:
             fieldnames = ['timestamp', 'num_hidden_layers', 'neurons_per_layer', 'epochs', 'batch_size',
                           'train_loss', 'train_accuracy', 'val_loss', 'val_accuracy',
                           'test_loss', 'test_accuracy', 'training_time_sec']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
+
+            # Если файл пустой, записываем заголовок
+            if csv_file.tell() == 0:
+                writer.writeheader()
 
             # Рассчитываем количество доступных процессов
             max_workers = self.calculate_max_workers(memory_per_process_gb)
@@ -119,6 +141,9 @@ class HyperparameterTuner:
             with ProcessPoolExecutor(max_workers=max_workers) as executor:
                 futures = []
                 for run_id, hp in enumerate(combinations, start=1):
+                    if hp in existing_combinations:
+                        print(f"[Run {run_id}] Пропущено, так как эта комбинация уже выполнена: {hp}")
+                        continue  # Пропускаем комбинацию, которая уже была выполнена
                     futures.append(executor.submit(self.single_run, hp, run_id))
 
                 for future in as_completed(futures):
