@@ -1,4 +1,6 @@
 import os
+
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import shutil
 
 from lab11.src.add_90_95_accuracy import update_results_with_epochs

@@ -1,6 +1,8 @@
 # main.py
 import os
 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
 from lab10.src.add_90_95_accuracy import update_results_with_epochs
 from lab10.src.data_loader import DataLoader
 from lab10.src.evaluator import Evaluator
