@@ -52,7 +52,7 @@
    ```bash
    pip install -r requirements.txt
    ```
-4. Перенесите папки `image_for_test`, `mnist_slice`, `test_dir`, `val_dir` с флешки Тутыгина в папку `lab10/data/...`
+4. Перенесите папки `train_dir`, `test_dir`, `val_dir` [из старого кода Тутыгина](https://disk.yandex.ru/d/DAC-Eiyg8FJ8WQ) в папку `lab10/data`.
 ---
 
 ### 2. Запуск
