@@ -52,7 +52,7 @@
    ```bash
    pip install -r requirements.txt
    ```
-
+4. Перенесите папки типа `train_dir`, `test_dir`, `val_dir` из старого проекта Тутыгина в папку `lab10/data`. 
 ---
 
 ### 2. Запуск
