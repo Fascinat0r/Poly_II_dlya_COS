@@ -67,7 +67,7 @@ def main():
 
     # Построение графиков
     visualizer = Visualizer(results_file=results_file, plots_dir=plots_dir)
-    visualizer.plot_results()
+    visualizer.plot_all()
     print("Эксперименты завершены и результаты сохранены.")
 
 

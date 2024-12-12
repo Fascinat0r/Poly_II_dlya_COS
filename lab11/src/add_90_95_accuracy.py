@@ -43,6 +43,15 @@ def update_results_with_epochs(results_file, stats_dir):
                 # Найти первую эпоху, где точность >= 95%
                 epoch_95 = epoch_stats.loc[epoch_stats['val_accuracy'] >= 0.95, 'epoch'].min()
 
+                # Получаем максимальное количество эпох из столбца 'epoch'
+                max_epoch = epoch_stats['epoch'].max()
+
+                # Если точность не найдена, записываем max_epoch + 1
+                if pd.isna(epoch_90):
+                    epoch_90 = max_epoch + 1
+                if pd.isna(epoch_95):
+                    epoch_95 = max_epoch + 1
+
                 # Обновляем строку в results_df для соответствующего количества обучающих примеров и модели
                 row_index = results_df[
                     (results_df['num_train_samples'] == num_train_samples) &
@@ -69,8 +78,8 @@ def update_results_with_epochs(results_file, stats_dir):
 
 # Путь к файлам
 if __name__ == "__main__":
-    results_file = 'results/experiment_results.csv'  # Укажите путь к файлу с результатами
-    stats_dir = 'results/per_run_stats'  # Укажите путь к папке с файлами статистики
+    results_file = '../results/experiment_results.csv'  # Укажите путь к файлу с результатами
+    stats_dir = '../results/per_run_stats'  # Укажите путь к папке с файлами статистики
 
     # Запуск обновления
     update_results_with_epochs(results_file, stats_dir)
