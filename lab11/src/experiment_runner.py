@@ -12,16 +12,12 @@ from lab11.src.trainer import Trainer
 
 
 class ExperimentRunner:
-    def __init__(self, num_samples_list, results_file='results/experiment_results.csv',
-                 haralick_params_file='data/haralick_parameters.csv', stats_dir='results/per_run_stats',
-                 model_types=None):
-        if model_types is None:
-            model_types = ['FFNN', 'CNN']
-        self.num_samples_list = num_samples_list
+    def __init__(self, hyperparameters, results_file='results/experiment_results.csv',
+                 haralick_params_file='data/haralick_parameters.csv', stats_dir='results/per_run_stats'):
+        self.hyperparameters = hyperparameters
         self.results_file = results_file
         self.haralick_params_file = haralick_params_file
         self.stats_dir = stats_dir
-        self.model_types = model_types
         self.epochs = 100
         self.batch_size = 20
 
@@ -48,8 +44,7 @@ class ExperimentRunner:
     def run_experiments(self):
         # Загрузка параметров Харалика
         haralick_params = HaralickDataLoader.get_haralick_params(self.haralick_params_file)
-        color_to_params = HaralickDataLoader.group_params_by_color(haralick_params)
-        color_combinations = HaralickDataLoader.get_color_combinations(color_to_params)
+        # color_to_params = HaralickDataLoader.group_params_by_color(haralick_params)
 
         # Загрузка существующих прогонов
         existing_runs = self.load_existing_runs()
@@ -62,10 +57,10 @@ class ExperimentRunner:
             if not existing_runs:  # Если файл пустой, записываем заголовок
                 writer.writeheader()
 
-            for model_type in self.model_types:
-                for color_combination in color_combinations:
+            for model_type in self.hyperparameters['model_types']:
+                for color_combination in self.hyperparameters['color_combinations']:
                     colors_used_str = ','.join(color_combination)
-                    for num_train_samples in self.num_samples_list:
+                    for num_train_samples in self.hyperparameters['num_samples_list']:
                         run_key = (model_type, colors_used_str, num_train_samples)
                         if run_key in existing_runs:
                             print(f"Пропуск существующего прогона: {run_key}")

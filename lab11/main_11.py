@@ -38,19 +38,27 @@ def main():
         if clear_choice == 'y':
             clear_data(results_file, stats_dir, plots_dir)
 
-    # Список количества обучающих примеров
-    num_samples_list = [300, 600, 900, 1500]
-
-    # Список типов моделей
-    model_types = ['FFNN', 'CNN']
+    hyperparameters = {
+        "num_samples_list": [300, 600, 900, 1500],  # Список количества обучающих примеров
+        "model_types": ['FFNN', 'CNN'],  # Список типов моделей
+        "color_combinations": [['R'],  # (Комбинации 'R', 'G', 'B', 'RG', 'RB', 'GB')
+                               ['G'],
+                               ['B'],
+                               ['RG'],
+                               ['GB'],
+                               ['RB'],
+                               ['R', 'G', 'B'],
+                               ['RG', 'RB', 'GB'],
+                               ['R', 'G', 'B', 'RG'],
+                               ['R', 'G', 'B', 'RG', 'RB', 'GB']]
+    }
 
     # Запуск экспериментов
     experiment_runner = ExperimentRunner(
-        num_samples_list=num_samples_list,
+        hyperparameters=hyperparameters,
         results_file=results_file,
         haralick_params_file=haralick_params_file,
         stats_dir=stats_dir,
-        model_types=model_types,
     )
     experiment_runner.run_experiments()
 
