@@ -1,5 +1,3 @@
-# src/visualizer.py
-
 import os
 
 import matplotlib.pyplot as plt
@@ -27,54 +25,39 @@ class Visualizer:
         plt.close()
         print(f"График времени обучения сохранён: {output_path}")
 
+        # Вывод результатов для этого графика
+        print("\nРезультаты для графика 'Время обучения vs Количество обучающих примеров':")
+        print(df[['model_type', 'colors_used', 'num_train_samples', 'train_time_sec']]
+              .sort_values(by='train_time_sec').to_string(index=False))
+
     def plot_correlation_matrix(self, df):
         plt.figure(figsize=(12, 10))
 
-        # Преобразуем 'colors_used' в количество параметров Харалика (просто число символов в строке)
-        df['num_haralik_params'] = df['colors_used'].apply(
-            lambda x: len(x))  # предполагаем, что это количество символов
+        df['num_haralik_params'] = df['colors_used'].apply(lambda x: len(x))
+        df_encoded = pd.get_dummies(df, columns=['model_type'], drop_first=True)
 
-        # Добавляем категориальные переменные, преобразованные в числа
-        # Модель может быть представлена как числовая переменная (например, через LabelEncoder или get_dummies)
-        df_encoded = pd.get_dummies(df, columns=['model_type'],
-                                    drop_first=True)  # Преобразуем 'model_type' в бинарные колонки
-
-        # Теперь добавляем все числовые столбцы
         numeric_cols = ['num_train_samples', 'train_time_sec', 'test_loss', 'test_accuracy', 'epoch_90_accuracy',
-                        'epoch_95_accuracy', 'num_haralik_params'] + [col for col in df_encoded.columns if
-                                                                      col.startswith('model_type')]
+                        'epoch_95_accuracy', 'num_haralik_params']
 
-        # Вычисление корреляционной матрицы
         corr = df_encoded[numeric_cols].corr()
-
-        # Построение тепловой карты
         sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
         plt.title('Корреляционная матрица')
 
-        # Сохранение графика
         output_path = os.path.join(self.plots_dir, 'correlation_matrix.png')
         plt.savefig(output_path, bbox_inches='tight')
         plt.close()
 
         print(f"Корреляционная матрица сохранена: {output_path}")
 
-    def plot_all(self):
-        df = pd.read_csv(self.results_file)
-
-        # Преобразование столбца colors_used в строковый формат, если это необходимо
-        if df['colors_used'].dtype != object:
-            df['colors_used'] = df['colors_used'].astype(str)
-
-        # Визуализация
-        self.plot_train_time_vs_samples(df)
-        self.plot_correlation_matrix(df)
-
-        # Дополнительные визуализации по необходимости
-        # Например, boxplots для распределения точности и потерь по моделям
-        self.plot_boxplots(df)
+        # Вывод результатов для этого графика
+        print("\nРезультаты для графика 'Корреляционная матрица':")
+        corr_pairs = corr.stack().reset_index()
+        corr_pairs.columns = ['Parameter 1', 'Parameter 2', 'Correlation']
+        corr_pairs = corr_pairs[corr_pairs['Parameter 1'] < corr_pairs['Parameter 2']]
+        corr_pairs['Abs Correlation'] = corr_pairs['Correlation'].abs()
+        print(corr_pairs.sort_values(by='Abs Correlation', ascending=False).to_string(index=False))
 
     def plot_boxplots(self, df):
-        # Boxplot для точности
         plt.figure(figsize=(12, 8))
         sns.boxplot(x='model_type', y='test_accuracy', hue='colors_used', data=df)
         plt.title('Распределение точности по типу модели и цветовым компонентам')
@@ -87,7 +70,10 @@ class Visualizer:
         plt.close()
         print(f"Boxplot точности сохранён: {output_path}")
 
-        # Boxplot для потерь
+        print("\nРезультаты для графика 'Распределение точности по типу модели и цветовым компонентам':")
+        print(df[['model_type', 'colors_used', 'test_accuracy']].sort_values(by='test_accuracy',
+                                                                             ascending=False).to_string(index=False))
+
         plt.figure(figsize=(12, 8))
         sns.boxplot(x='model_type', y='test_loss', hue='colors_used', data=df)
         plt.title('Распределение потерь по типу модели и цветовым компонентам')
@@ -100,7 +86,9 @@ class Visualizer:
         plt.close()
         print(f"Boxplot потерь сохранён: {output_path}")
 
-        # Boxplot для времени обучения
+        print("\nРезультаты для графика 'Распределение потерь по типу модели и цветовым компонентам':")
+        print(df[['model_type', 'colors_used', 'test_loss']].sort_values(by='test_loss').to_string(index=False))
+
         plt.figure(figsize=(12, 8))
         sns.boxplot(x='model_type', y='train_time_sec', hue='colors_used', data=df)
         plt.title('Распределение времени обучения по типу модели и цветовым компонентам')
@@ -113,13 +101,23 @@ class Visualizer:
         plt.close()
         print(f"Boxplot времени обучения сохранён: {output_path}")
 
+        print("\nРезультаты для графика 'Распределение времени обучения по типу модели и цветовым компонентам':")
+        print(
+            df[['model_type', 'colors_used', 'train_time_sec']].sort_values(by='train_time_sec').to_string(index=False))
+
+    def plot_all(self):
+        df = pd.read_csv(self.results_file)
+
+        if df['colors_used'].dtype != object:
+            df['colors_used'] = df['colors_used'].astype(str)
+
+        self.plot_train_time_vs_samples(df)
+        self.plot_correlation_matrix(df)
+        self.plot_boxplots(df)
 
 if __name__ == "__main__":
-    # Путь к файлу с результатами
     results_file = '../results/experiment_results.csv'
-    # Папка для сохранения графиков
     plots_dir = '../results/plots'
 
-    # Создание объекта Visualizer и построение всех графиков
     visualizer = Visualizer(results_file=results_file, plots_dir=plots_dir)
     visualizer.plot_all()
