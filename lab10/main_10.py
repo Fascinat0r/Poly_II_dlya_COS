@@ -1,6 +1,8 @@
 # main.py
 import os
 
+from lab10.src.round_results import process_and_round_csv
+
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 from lab10.src.add_90_95_accuracy import update_results_with_epochs
@@ -22,6 +24,7 @@ def main():
     val_dir = os.path.join(data_dir, 'val_dir')
     test_dir = os.path.join(data_dir, 'test_dir')
     results_file = os.path.join(results_dir, 'hyperparameter_results.csv')
+    rounded_results_file = os.path.join(results_dir, 'hyperparameter_results_rounded.csv')
     stats_dir = os.path.join(results_dir, 'per_run_stats')
     plots_dir = os.path.join(results_dir, 'plots')
 
@@ -45,7 +48,7 @@ def main():
     trainer = Trainer(model=None)  # Модель будет задана в процессе
     evaluator = Evaluator(model=None)  # Модель будет задана в процессе
     tuner = HyperparameterTuner(model_builder, data_loader, trainer, evaluator,
-                                results_file='results/hyperparameter_results.csv', stats_dir='results/per_run_stats')
+                                results_file=results_file, stats_dir=stats_dir)
     visualizer = Visualizer(results_file, stats_dir, plots_dir)
 
     # Запуск подбора гиперпараметров
@@ -57,6 +60,8 @@ def main():
     # Построение графиков
     visualizer.generate_all_plots()
     print("Подбор гиперпараметров и построение графиков завершены.")
+
+    process_and_round_csv(results_file, rounded_results_file)
 
 
 if __name__ == '__main__':

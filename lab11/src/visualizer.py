@@ -115,6 +115,7 @@ class Visualizer:
         self.plot_correlation_matrix(df)
         self.plot_boxplots(df)
 
+
 if __name__ == "__main__":
     results_file = '../results/experiment_results.csv'
     plots_dir = '../results/plots'
